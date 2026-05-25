@@ -16,6 +16,50 @@ namespace Student_Record_System
             this.Shown += new EventHandler(Form1_Shown);
 
         }
+        private void ExportGridToCSV(DataGridView dgv, string fileName)
+        {
+            try
+            {
+                // Build the CSV string content area safely using a StringBuilder
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+                // 1. EXTRACT HEADERS: Filter out hidden columns and assemble the top row
+                var validColumns = dgv.Columns.Cast<DataGridViewColumn>()
+                    .Where(col => col.Visible)
+                    .OrderBy(col => col.DisplayIndex)
+                    .ToList();
+
+                string headerLine = string.Join(",", validColumns.Select(col => $"\"{col.HeaderText.Replace("\"", "\"\"")}\""));
+                sb.AppendLine(headerLine);
+
+                // 2. EXTRACT ROWS: Iterates exactly down your aligned rows grid setup
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    if (row.IsNewRow) continue; // Skip the blank input line if present
+
+                    string rowLine = string.Join(",", validColumns.Select(col =>
+                    {
+                        object cellValue = row.Cells[col.Index].Value;
+                        string cellText = cellValue != null ? cellValue.ToString() : "";
+
+                        // Escape inner quotation marks to prevent format breaks in Excel
+                        return $"\"{cellText.Replace("\"", "\"\"")}\"";
+                    }));
+
+                    sb.AppendLine(rowLine);
+                }
+
+                // 3. WRITE FILE: Save the text block physically to the user's computer disk storage
+                File.WriteAllText(fileName, sb.ToString(), System.Text.Encoding.UTF8);
+
+                MessageBox.Show("Student database successfully exported to CSV format!", "Export Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to save data: " + ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
 
         private bool IsDuplicateExcludingSelf(string columnName, string value, string currentId = "")
         {
@@ -893,6 +937,29 @@ namespace Student_Record_System
 
             // 3. Kill the internal cell pointer that causes the blue box on the header
             dgvStudents.CurrentCell = null;
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            // Ensure there is actual data inside the grid to prevent empty text downloads
+            if (dgvStudents.Rows.Count == 0)
+            {
+                MessageBox.Show("There are no student records currently loaded to export.", "Empty Grid", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "CSV Files (*.csv)|*.csv";
+                sfd.FileName = $"Student_Records_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+                sfd.Title = "Save Student Database Export";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    // Triggers the background builder loop using the selected target path location
+                    ExportGridToCSV(dgvStudents, sfd.FileName);
+                }
+            }
         }
     }
 }

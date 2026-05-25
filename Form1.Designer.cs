@@ -30,22 +30,30 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             roundedGroupBox1 = new RoundedGroupBox();
+            panel9 = new Panel();
             txtPhone = new TextBox();
-            label11 = new Label();
-            txtEmail = new TextBox();
-            txtStudentID = new TextBox();
-            label10 = new Label();
+            panel8 = new Panel();
             cmbYear = new ComboBox();
-            label9 = new Label();
+            panel7 = new Panel();
+            cmbGender = new ComboBox();
+            panel6 = new Panel();
+            dtpDOB = new DateTimePicker();
+            panel5 = new Panel();
             txtFullName = new TextBox();
+            panel4 = new Panel();
+            txtEmail = new TextBox();
+            panel3 = new Panel();
+            txtStudentID = new TextBox();
+            panel2 = new Panel();
+            cmbCourse = new ComboBox();
+            label11 = new Label();
+            label10 = new Label();
+            label9 = new Label();
+            label7 = new Label();
             label4 = new Label();
             label5 = new Label();
             label8 = new Label();
-            dtpDOB = new DateTimePicker();
-            cmbCourse = new ComboBox();
-            label7 = new Label();
             label6 = new Label();
-            cmbGender = new ComboBox();
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             label2 = new Label();
@@ -55,7 +63,16 @@
             btnDelete = new RoundedButton();
             btnRefresh = new RoundedButton();
             dgvStudents = new DataGridView();
+            btnExport = new RoundedButton();
             roundedGroupBox1.SuspendLayout();
+            panel9.SuspendLayout();
+            panel8.SuspendLayout();
+            panel7.SuspendLayout();
+            panel6.SuspendLayout();
+            panel5.SuspendLayout();
+            panel4.SuspendLayout();
+            panel3.SuspendLayout();
+            panel2.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvStudents).BeginInit();
@@ -65,35 +82,45 @@
             // 
             roundedGroupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             roundedGroupBox1.BackColor = Color.Transparent;
-            roundedGroupBox1.BorderColor = Color.FromArgb(74, 0, 0);
+            roundedGroupBox1.BorderColor = Color.Maroon;
             roundedGroupBox1.BorderThickness = 2;
-            roundedGroupBox1.Controls.Add(txtPhone);
+            roundedGroupBox1.Controls.Add(panel9);
+            roundedGroupBox1.Controls.Add(panel8);
+            roundedGroupBox1.Controls.Add(panel7);
+            roundedGroupBox1.Controls.Add(panel6);
+            roundedGroupBox1.Controls.Add(panel5);
+            roundedGroupBox1.Controls.Add(panel4);
+            roundedGroupBox1.Controls.Add(panel3);
+            roundedGroupBox1.Controls.Add(panel2);
             roundedGroupBox1.Controls.Add(label11);
-            roundedGroupBox1.Controls.Add(txtEmail);
-            roundedGroupBox1.Controls.Add(txtStudentID);
             roundedGroupBox1.Controls.Add(label10);
-            roundedGroupBox1.Controls.Add(cmbYear);
             roundedGroupBox1.Controls.Add(label9);
-            roundedGroupBox1.Controls.Add(txtFullName);
+            roundedGroupBox1.Controls.Add(label7);
             roundedGroupBox1.Controls.Add(label4);
             roundedGroupBox1.Controls.Add(label5);
             roundedGroupBox1.Controls.Add(label8);
-            roundedGroupBox1.Controls.Add(dtpDOB);
-            roundedGroupBox1.Controls.Add(cmbCourse);
-            roundedGroupBox1.Controls.Add(label7);
             roundedGroupBox1.Controls.Add(label6);
-            roundedGroupBox1.Controls.Add(cmbGender);
             roundedGroupBox1.CornerRadius = 15;
             roundedGroupBox1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             roundedGroupBox1.ForeColor = Color.White;
             roundedGroupBox1.HeaderTextColor = Color.Maroon;
             roundedGroupBox1.HeaderTextPaddingLeft = 35;
-            roundedGroupBox1.Location = new Point(32, 143);
+            roundedGroupBox1.Location = new Point(20, 143);
             roundedGroupBox1.Name = "roundedGroupBox1";
-            roundedGroupBox1.Size = new Size(1579, 314);
+            roundedGroupBox1.Size = new Size(1858, 224);
             roundedGroupBox1.TabIndex = 0;
             roundedGroupBox1.TabStop = false;
             roundedGroupBox1.Text = "Student Details";
+            // 
+            // panel9
+            // 
+            panel9.BackColor = Color.Maroon;
+            panel9.Controls.Add(txtPhone);
+            panel9.ForeColor = Color.Black;
+            panel9.Location = new Point(1613, 143);
+            panel9.Name = "panel9";
+            panel9.Size = new Size(208, 39);
+            panel9.TabIndex = 19;
             // 
             // txtPhone
             // 
@@ -101,28 +128,121 @@
             txtPhone.BorderStyle = BorderStyle.None;
             txtPhone.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             txtPhone.ForeColor = Color.Maroon;
-            txtPhone.Location = new Point(982, 258);
+            txtPhone.Location = new Point(4, 4);
             txtPhone.MaximumSize = new Size(200, 31);
             txtPhone.MaxLength = 13;
             txtPhone.Name = "txtPhone";
-            txtPhone.Size = new Size(157, 31);
+            txtPhone.Size = new Size(200, 31);
             txtPhone.TabIndex = 17;
             txtPhone.TextChanged += txtPhone_TextChanged;
             txtPhone.KeyDown += txtPhone_KeyDown;
             txtPhone.KeyPress += txtPhone_KeyPress;
             // 
-            // label11
+            // panel8
             // 
-            label11.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label11.AutoSize = true;
-            label11.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label11.ForeColor = Color.Maroon;
-            label11.Location = new Point(89, 53);
-            label11.Margin = new Padding(23, 10, 3, 0);
-            label11.Name = "label11";
-            label11.Size = new Size(140, 31);
-            label11.TabIndex = 5;
-            label11.Text = "Student ID :";
+            panel8.BackColor = Color.Maroon;
+            panel8.Controls.Add(cmbYear);
+            panel8.Location = new Point(855, 143);
+            panel8.Name = "panel8";
+            panel8.Size = new Size(115, 39);
+            panel8.TabIndex = 21;
+            // 
+            // cmbYear
+            // 
+            cmbYear.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbYear.AutoCompleteCustomSource.AddRange(new string[] { "1", "2", "3", "4" });
+            cmbYear.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbYear.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbYear.FlatStyle = FlatStyle.Flat;
+            cmbYear.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            cmbYear.ForeColor = Color.Maroon;
+            cmbYear.FormattingEnabled = true;
+            cmbYear.Items.AddRange(new object[] { "1", "2", "3", "4" });
+            cmbYear.Location = new Point(4, 3);
+            cmbYear.MaximumSize = new Size(150, 0);
+            cmbYear.Name = "cmbYear";
+            cmbYear.Size = new Size(107, 33);
+            cmbYear.TabIndex = 13;
+            // 
+            // panel7
+            // 
+            panel7.BackColor = Color.Maroon;
+            panel7.Controls.Add(cmbGender);
+            panel7.Location = new Point(1701, 58);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(117, 39);
+            panel7.TabIndex = 21;
+            // 
+            // cmbGender
+            // 
+            cmbGender.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbGender.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbGender.FlatStyle = FlatStyle.Flat;
+            cmbGender.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            cmbGender.ForeColor = Color.Maroon;
+            cmbGender.FormattingEnabled = true;
+            cmbGender.Items.AddRange(new object[] { "Male", "Female" });
+            cmbGender.Location = new Point(4, 3);
+            cmbGender.Margin = new Padding(3, 10, 3, 3);
+            cmbGender.Name = "cmbGender";
+            cmbGender.Size = new Size(109, 33);
+            cmbGender.TabIndex = 9;
+            // 
+            // panel6
+            // 
+            panel6.BackColor = Color.Maroon;
+            panel6.Controls.Add(dtpDOB);
+            panel6.Location = new Point(1233, 58);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(358, 39);
+            panel6.TabIndex = 21;
+            // 
+            // dtpDOB
+            // 
+            dtpDOB.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dtpDOB.CalendarForeColor = Color.Maroon;
+            dtpDOB.CalendarTitleForeColor = Color.Maroon;
+            dtpDOB.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            dtpDOB.Location = new Point(4, 3);
+            dtpDOB.Margin = new Padding(3, 10, 3, 3);
+            dtpDOB.MaximumSize = new Size(350, 34);
+            dtpDOB.Name = "dtpDOB";
+            dtpDOB.Size = new Size(350, 34);
+            dtpDOB.TabIndex = 7;
+            // 
+            // panel5
+            // 
+            panel5.BackColor = Color.Maroon;
+            panel5.Controls.Add(txtFullName);
+            panel5.Location = new Point(613, 58);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(408, 39);
+            panel5.TabIndex = 21;
+            // 
+            // txtFullName
+            // 
+            txtFullName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            txtFullName.BorderStyle = BorderStyle.None;
+            txtFullName.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
+            txtFullName.ForeColor = Color.Maroon;
+            txtFullName.Location = new Point(5, 4);
+            txtFullName.Margin = new Padding(3, 10, 3, 3);
+            txtFullName.MaximumSize = new Size(400, 31);
+            txtFullName.MaxLength = 30;
+            txtFullName.Name = "txtFullName";
+            txtFullName.Size = new Size(398, 31);
+            txtFullName.TabIndex = 5;
+            txtFullName.TextChanged += txtFullName_TextChanged;
+            txtFullName.KeyPress += txtFullName_KeyPress;
+            // 
+            // panel4
+            // 
+            panel4.BackColor = Color.Maroon;
+            panel4.Controls.Add(txtEmail);
+            panel4.Location = new Point(1093, 143);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(382, 39);
+            panel4.TabIndex = 20;
             // 
             // txtEmail
             // 
@@ -130,22 +250,31 @@
             txtEmail.BorderStyle = BorderStyle.None;
             txtEmail.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             txtEmail.ForeColor = Color.Maroon;
-            txtEmail.Location = new Point(982, 193);
+            txtEmail.Location = new Point(4, 4);
             txtEmail.MaximumSize = new Size(374, 31);
             txtEmail.Name = "txtEmail";
-            txtEmail.Size = new Size(320, 31);
+            txtEmail.Size = new Size(374, 31);
             txtEmail.TabIndex = 16;
             txtEmail.TextChanged += txtEmail_TextChanged;
             txtEmail.KeyPress += txtEmail_KeyPress;
             // 
+            // panel3
+            // 
+            panel3.BackColor = Color.Maroon;
+            panel3.Controls.Add(txtStudentID);
+            panel3.ForeColor = Color.Black;
+            panel3.Location = new Point(194, 58);
+            panel3.Name = "panel3";
+            panel3.Size = new Size(238, 39);
+            panel3.TabIndex = 19;
+            // 
             // txtStudentID
             // 
-            txtStudentID.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             txtStudentID.BorderStyle = BorderStyle.None;
             txtStudentID.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             txtStudentID.ForeColor = Color.Maroon;
-            txtStudentID.Location = new Point(254, 53);
-            txtStudentID.Margin = new Padding(3, 10, 3, 3);
+            txtStudentID.Location = new Point(4, 4);
+            txtStudentID.Margin = new Padding(0);
             txtStudentID.MaximumSize = new Size(230, 31);
             txtStudentID.Name = "txtStudentID";
             txtStudentID.PlaceholderText = "ex. 2024-00174-SM-0";
@@ -156,35 +285,57 @@
             txtStudentID.KeyDown += txtStudentID_KeyDown;
             txtStudentID.KeyPress += txtStudentID_KeyPress;
             // 
+            // panel2
+            // 
+            panel2.BackColor = Color.Maroon;
+            panel2.Controls.Add(cmbCourse);
+            panel2.ForeColor = Color.Black;
+            panel2.Location = new Point(149, 143);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(597, 39);
+            panel2.TabIndex = 18;
+            // 
+            // cmbCourse
+            // 
+            cmbCourse.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            cmbCourse.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbCourse.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbCourse.FlatStyle = FlatStyle.Flat;
+            cmbCourse.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            cmbCourse.ForeColor = Color.Maroon;
+            cmbCourse.FormattingEnabled = true;
+            cmbCourse.Items.AddRange(new object[] { "BSA - Bachelor of Science in Accountancy", "BSCpE - Bachelor of Science in Computer Engineering", "BSIT - Bachelor of Science in Information Technology", "BSENTREP - Bachelor of Science in Entrepreneurship", "BSHM - Bachelor of Science in Hospitality Management (BSHM)", "BSEDEN - Bachelor of Secondary Education major in English", "BSEDMT - Bachelor of Secondary Education major in Mathematics", "DOMT - Diploma in Office Management Technology" });
+            cmbCourse.Location = new Point(4, 3);
+            cmbCourse.Margin = new Padding(10);
+            cmbCourse.Name = "cmbCourse";
+            cmbCourse.Size = new Size(588, 33);
+            cmbCourse.TabIndex = 11;
+            // 
+            // label11
+            // 
+            label11.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label11.AutoSize = true;
+            label11.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label11.ForeColor = Color.Maroon;
+            label11.Location = new Point(31, 62);
+            label11.Margin = new Padding(23, 10, 3, 0);
+            label11.Name = "label11";
+            label11.Size = new Size(140, 31);
+            label11.TabIndex = 5;
+            label11.Text = "Student ID :";
+            // 
             // label10
             // 
             label10.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label10.ForeColor = Color.Maroon;
-            label10.Location = new Point(839, 257);
+            label10.Location = new Point(1494, 146);
             label10.Margin = new Padding(60, 0, 3, 0);
             label10.Name = "label10";
             label10.Size = new Size(94, 31);
             label10.TabIndex = 15;
             label10.Text = "Phone :";
-            // 
-            // cmbYear
-            // 
-            cmbYear.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cmbYear.AutoCompleteCustomSource.AddRange(new string[] { "1", "2", "3", "4" });
-            cmbYear.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbYear.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbYear.FlatStyle = FlatStyle.Flat;
-            cmbYear.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            cmbYear.ForeColor = Color.Maroon;
-            cmbYear.FormattingEnabled = true;
-            cmbYear.Items.AddRange(new object[] { "1", "2", "3", "4" });
-            cmbYear.Location = new Point(982, 123);
-            cmbYear.MaximumSize = new Size(150, 0);
-            cmbYear.Name = "cmbYear";
-            cmbYear.Size = new Size(96, 36);
-            cmbYear.TabIndex = 13;
             // 
             // label9
             // 
@@ -192,28 +343,25 @@
             label9.AutoSize = true;
             label9.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label9.ForeColor = Color.Maroon;
-            label9.Location = new Point(848, 189);
+            label9.Location = new Point(989, 146);
             label9.Margin = new Padding(60, 0, 3, 0);
             label9.Name = "label9";
             label9.Size = new Size(85, 31);
             label9.TabIndex = 14;
             label9.Text = "Email :";
             // 
-            // txtFullName
+            // label7
             // 
-            txtFullName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            txtFullName.BorderStyle = BorderStyle.None;
-            txtFullName.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
-            txtFullName.ForeColor = Color.Maroon;
-            txtFullName.Location = new Point(254, 115);
-            txtFullName.Margin = new Padding(3, 10, 3, 3);
-            txtFullName.MaximumSize = new Size(400, 31);
-            txtFullName.MaxLength = 30;
-            txtFullName.Name = "txtFullName";
-            txtFullName.Size = new Size(400, 31);
-            txtFullName.TabIndex = 5;
-            txtFullName.TextChanged += txtFullName_TextChanged;
-            txtFullName.KeyPress += txtFullName_KeyPress;
+            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
+            label7.ForeColor = Color.Maroon;
+            label7.Location = new Point(31, 146);
+            label7.Margin = new Padding(60, 10, 3, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(99, 31);
+            label7.TabIndex = 10;
+            label7.Text = "Course :";
             // 
             // label4
             // 
@@ -221,7 +369,7 @@
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label4.ForeColor = Color.Maroon;
-            label4.Location = new Point(94, 116);
+            label4.Location = new Point(455, 62);
             label4.Margin = new Padding(23, 10, 3, 3);
             label4.Name = "label4";
             label4.Size = new Size(135, 31);
@@ -234,7 +382,7 @@
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label5.ForeColor = Color.Maroon;
-            label5.Location = new Point(63, 179);
+            label5.Location = new Point(1044, 62);
             label5.Margin = new Padding(23, 10, 3, 3);
             label5.Name = "label5";
             label5.Size = new Size(166, 31);
@@ -247,54 +395,12 @@
             label8.AutoSize = true;
             label8.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label8.ForeColor = Color.Maroon;
-            label8.Location = new Point(862, 121);
+            label8.Location = new Point(765, 146);
             label8.Margin = new Padding(60, 0, 3, 0);
             label8.Name = "label8";
             label8.Size = new Size(71, 31);
             label8.TabIndex = 12;
             label8.Text = "Year :";
-            // 
-            // dtpDOB
-            // 
-            dtpDOB.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            dtpDOB.CalendarForeColor = Color.Maroon;
-            dtpDOB.CalendarTitleForeColor = Color.Maroon;
-            dtpDOB.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            dtpDOB.Location = new Point(254, 177);
-            dtpDOB.Margin = new Padding(3, 10, 3, 3);
-            dtpDOB.MaximumSize = new Size(350, 34);
-            dtpDOB.Name = "dtpDOB";
-            dtpDOB.Size = new Size(350, 34);
-            dtpDOB.TabIndex = 7;
-            // 
-            // cmbCourse
-            // 
-            cmbCourse.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            cmbCourse.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbCourse.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbCourse.FlatStyle = FlatStyle.Flat;
-            cmbCourse.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
-            cmbCourse.ForeColor = Color.Maroon;
-            cmbCourse.FormattingEnabled = true;
-            cmbCourse.Items.AddRange(new object[] { "BSA - Bachelor of Science in Accountancy", "BSCpE - Bachelor of Science in Computer Engineering", "BSIT - Bachelor of Science in Information Technology", "BSENTREP - Bachelor of Science in Entrepreneurship", "BSHM - Bachelor of Science in Hospitality Management (BSHM)", "BSEDEN - Bachelor of Secondary Education major in English", "BSEDMT - Bachelor of Secondary Education major in Mathematics", "DOMT - Diploma in Office Management Technology" });
-            cmbCourse.Location = new Point(982, 53);
-            cmbCourse.Margin = new Padding(3, 10, 3, 3);
-            cmbCourse.Name = "cmbCourse";
-            cmbCourse.Size = new Size(567, 39);
-            cmbCourse.TabIndex = 11;
-            // 
-            // label7
-            // 
-            label7.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
-            label7.ForeColor = Color.Maroon;
-            label7.Location = new Point(834, 53);
-            label7.Margin = new Padding(60, 10, 3, 0);
-            label7.Name = "label7";
-            label7.Size = new Size(99, 31);
-            label7.TabIndex = 10;
-            label7.Text = "Course :";
             // 
             // label6
             // 
@@ -302,27 +408,12 @@
             label6.AutoSize = true;
             label6.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             label6.ForeColor = Color.Maroon;
-            label6.Location = new Point(165, 242);
+            label6.Location = new Point(1614, 62);
             label6.Margin = new Padding(23, 10, 3, 3);
             label6.Name = "label6";
             label6.Size = new Size(64, 31);
             label6.TabIndex = 8;
             label6.Text = "Sex :";
-            // 
-            // cmbGender
-            // 
-            cmbGender.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            cmbGender.AutoCompleteSource = AutoCompleteSource.ListItems;
-            cmbGender.FlatStyle = FlatStyle.Flat;
-            cmbGender.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            cmbGender.ForeColor = Color.Maroon;
-            cmbGender.FormattingEnabled = true;
-            cmbGender.Items.AddRange(new object[] { "Male", "Female" });
-            cmbGender.Location = new Point(254, 242);
-            cmbGender.Margin = new Padding(3, 10, 3, 3);
-            cmbGender.Name = "cmbGender";
-            cmbGender.Size = new Size(186, 36);
-            cmbGender.TabIndex = 9;
             // 
             // panel1
             // 
@@ -370,7 +461,6 @@
             // 
             // btnAdd
             // 
-            btnAdd.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnAdd.BackColor = Color.Maroon;
             btnAdd.BorderColor = Color.Transparent;
             btnAdd.BorderThickness = 1;
@@ -383,13 +473,13 @@
             btnAdd.HoverColor = Color.FromArgb(160, 0, 0);
             btnAdd.Image = (Image)resources.GetObject("btnAdd.Image");
             btnAdd.ImageAlign = ContentAlignment.MiddleLeft;
-            btnAdd.Location = new Point(1651, 159);
+            btnAdd.Location = new Point(20, 382);
             btnAdd.Name = "btnAdd";
             btnAdd.Padding = new Padding(30, 0, 0, 0);
             btnAdd.PressedColor = Color.FromArgb(60, 0, 0);
             btnAdd.Size = new Size(217, 50);
             btnAdd.TabIndex = 2;
-            btnAdd.Text = "Add    ";
+            btnAdd.Text = "Add Profile   ";
             btnAdd.TextAlign = ContentAlignment.MiddleLeft;
             btnAdd.TextImageRelation = TextImageRelation.ImageBeforeText;
             btnAdd.TopLeftRadius = 15;
@@ -412,7 +502,7 @@
             btnUpdate.HoverColor = Color.FromArgb(160, 0, 0);
             btnUpdate.Image = Properties.Resources.pencil__1_;
             btnUpdate.ImageAlign = ContentAlignment.MiddleLeft;
-            btnUpdate.Location = new Point(1651, 241);
+            btnUpdate.Location = new Point(430, 382);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Padding = new Padding(30, 0, 0, 0);
             btnUpdate.PressedColor = Color.FromArgb(60, 0, 0);
@@ -440,7 +530,7 @@
             btnDelete.HoverColor = Color.FromArgb(160, 0, 0);
             btnDelete.Image = (Image)resources.GetObject("btnDelete.Image");
             btnDelete.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDelete.Location = new Point(1651, 323);
+            btnDelete.Location = new Point(840, 382);
             btnDelete.Name = "btnDelete";
             btnDelete.Padding = new Padding(30, 0, 0, 0);
             btnDelete.PressedColor = Color.FromArgb(60, 0, 0);
@@ -468,7 +558,7 @@
             btnRefresh.HoverColor = Color.FromArgb(160, 0, 0);
             btnRefresh.Image = (Image)resources.GetObject("btnRefresh.Image");
             btnRefresh.ImageAlign = ContentAlignment.MiddleLeft;
-            btnRefresh.Location = new Point(1651, 406);
+            btnRefresh.Location = new Point(1250, 382);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Padding = new Padding(30, 0, 0, 0);
             btnRefresh.PressedColor = Color.FromArgb(60, 0, 0);
@@ -487,18 +577,47 @@
             dgvStudents.BackgroundColor = Color.White;
             dgvStudents.BorderStyle = BorderStyle.None;
             dgvStudents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvStudents.Location = new Point(32, 491);
+            dgvStudents.Location = new Point(20, 448);
             dgvStudents.Name = "dgvStudents";
             dgvStudents.RowHeadersWidth = 51;
-            dgvStudents.Size = new Size(1836, 517);
+            dgvStudents.Size = new Size(1858, 560);
             dgvStudents.TabIndex = 6;
             dgvStudents.CellClick += dgvStudents_CellClick;
             // 
+            // btnExport
+            // 
+            btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnExport.BackColor = Color.Maroon;
+            btnExport.BorderColor = Color.FromArgb(74, 0, 0);
+            btnExport.BorderThickness = 1;
+            btnExport.BottomLeftRadius = 15;
+            btnExport.BottomRightRadius = 15;
+            btnExport.FlatAppearance.BorderSize = 0;
+            btnExport.FlatStyle = FlatStyle.Flat;
+            btnExport.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
+            btnExport.ForeColor = Color.White;
+            btnExport.HoverColor = Color.FromArgb(160, 0, 0);
+            btnExport.Image = (Image)resources.GetObject("btnExport.Image");
+            btnExport.ImageAlign = ContentAlignment.MiddleLeft;
+            btnExport.Location = new Point(1660, 382);
+            btnExport.Name = "btnExport";
+            btnExport.Padding = new Padding(30, 0, 0, 0);
+            btnExport.PressedColor = Color.FromArgb(60, 0, 0);
+            btnExport.Size = new Size(217, 50);
+            btnExport.TabIndex = 7;
+            btnExport.Text = "Export  ";
+            btnExport.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnExport.TopLeftRadius = 15;
+            btnExport.TopRightRadius = 15;
+            btnExport.UseVisualStyleBackColor = false;
+            btnExport.Click += btnExport_Click;
+            // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(120F, 120F);
-            AutoScaleMode = AutoScaleMode.Dpi;
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1902, 1033);
+            Controls.Add(btnExport);
             Controls.Add(dgvStudents);
             Controls.Add(btnRefresh);
             Controls.Add(btnDelete);
@@ -516,6 +635,18 @@
             TextChanged += Form1_TextChanged;
             roundedGroupBox1.ResumeLayout(false);
             roundedGroupBox1.PerformLayout();
+            panel9.ResumeLayout(false);
+            panel9.PerformLayout();
+            panel8.ResumeLayout(false);
+            panel7.ResumeLayout(false);
+            panel6.ResumeLayout(false);
+            panel5.ResumeLayout(false);
+            panel5.PerformLayout();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
+            panel3.ResumeLayout(false);
+            panel3.PerformLayout();
+            panel2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -551,5 +682,14 @@
         private RoundedButton btnDelete;
         private RoundedButton btnRefresh;
         private DataGridView dgvStudents;
+        private Panel panel2;
+        private Panel panel3;
+        private Panel panel6;
+        private Panel panel5;
+        private Panel panel4;
+        private Panel panel7;
+        private Panel panel8;
+        private Panel panel9;
+        private RoundedButton btnExport;
     }
 }
