@@ -439,17 +439,12 @@ namespace Student_Record_System
             List<CourseItem> courses = new List<CourseItem>
     {
         new CourseItem("BSA", "BSA - Bachelor of Science in Accountancy"),
-        new CourseItem("BSCE", "BSCE - Bachelor of Science in Civil Engineering"),
         new CourseItem("BSCpE", "BSCpE - Bachelor of Science in Computer Engineering"),
-        new CourseItem("BSECE", "BSECE - Bachelor of Science in Electronics Engineering"),
         new CourseItem("BSIT", "BSIT - Bachelor of Science in Information Technology"),
-        new CourseItem("BSBA-HRM", "BSBA-HRM - Bachelor of Science in Business Administration major in Human Resource Management"),
-        new CourseItem("BSBA-MM", "BSBA-MM - Bachelor of Science in Business Administration major in Marketing Management"),
         new CourseItem("BSENTREP", "BSENTREP - Bachelor of Science in Entrepreneurship"),
         new CourseItem("BSHM", "BSHM - Bachelor of Science in Hospitality Management"),
         new CourseItem("BSED-ENG", "BSED-ENG - Bachelor of Secondary Education major in English"),
         new CourseItem("BSED-MATH", "BSED-MATH - Bachelor of Secondary Education major in Mathematics"),
-        new CourseItem("DICT", "DICT - Diploma in Information Communication Technology"),
         new CourseItem("DOMT", "DOMT - Diploma in Office Management Technology")
     };
 
