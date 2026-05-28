@@ -100,8 +100,11 @@ namespace Student_Record_System
                 using (MySqlConnection conn = new MySqlConnection(connString))
                 {
                     conn.Open();
+
+                    // FIX: Added "WHERE status = 'Active'" so deleted records don't show here
                     string query = "SELECT student_id AS 'Student ID', full_name AS 'Full Name', date_of_birth AS 'Date of Birth', " +
-                                   "gender AS 'Gender', course AS 'Course', year_level AS 'Year', email AS 'Email', phone AS 'Phone' FROM students";
+                                   "gender AS 'Gender', course AS 'Course', year_level AS 'Year', email AS 'Email', phone AS 'Phone' " +
+                                   "FROM students WHERE status = 'Active'";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
@@ -125,10 +128,8 @@ namespace Student_Record_System
                                 dgvStudents.Rows[i].Cells["No"].Value = (i + 1).ToString();
                             }
 
-                            // 1. Force structural sizing calculations to Fill mode first
                             dgvStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                            // 2. Adjust weights to shift Year left and balance spacing
                             for (int i = 0; i < dgvStudents.Columns.Count; i++)
                             {
                                 DataGridViewColumn col = dgvStudents.Columns[i];
@@ -139,30 +140,23 @@ namespace Student_Record_System
                                 else if (col.HeaderText == "Full Name") { col.FillWeight = 180; }
                                 else if (col.HeaderText == "Date of Birth") { col.FillWeight = 110; }
                                 else if (col.HeaderText == "Gender") { col.FillWeight = 75; }
-
-                                // Increased Course to push Year away from Email
                                 else if (col.HeaderText == "Course") { col.FillWeight = 110; }
                                 else if (col.HeaderText == "Year") { col.FillWeight = 75; }
-
-                                // Normalized Email since it's now center-aligned
                                 else if (col.HeaderText == "Email") { col.FillWeight = 165; }
                                 else if (col.HeaderText == "Phone") { col.FillWeight = 115; }
                             }
 
-                            // 3. Update alignments: Move Email to Center alignment alongside Year and Course
                             for (int i = 0; i < dgvStudents.Columns.Count; i++)
                             {
                                 DataGridViewColumn col = dgvStudents.Columns[i];
 
                                 if (col.HeaderText == "Full Name")
                                 {
-                                    // Left-align only the Full Name column for natural reading
                                     col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
                                     col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
                                 }
                                 else
                                 {
-                                    // Centers everything else perfectly, including Email and Year
                                     col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
                                     col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                                 }
@@ -623,181 +617,122 @@ namespace Student_Record_System
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtStudentID.Text))
+            if (dgvStudents.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a student from the list to delete.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a student record to delete.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Confirmation dialog check
-            DialogResult confirm = MessageBox.Show("Are you sure you want to delete this record permanently?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            string studentId = dgvStudents.SelectedRows[0].Cells["Student ID"].Value.ToString();
+            string studentName = dgvStudents.SelectedRows[0].Cells["Full Name"].Value.ToString();
 
-            if (confirm == DialogResult.Yes)
+            DialogResult result = MessageBox.Show($"Are you sure you want to move {studentName} to the Recycle Bin?",
+                "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
             {
                 try
                 {
                     using (MySqlConnection conn = new MySqlConnection(connString))
                     {
                         conn.Open();
-                        string query = "DELETE FROM students WHERE student_id = @id";
+                        // Flag the record status as 'Archived'
+                        string query = "UPDATE students SET status = 'Archived' WHERE student_id = @id";
 
                         using (MySqlCommand cmd = new MySqlCommand(query, conn))
                         {
-                            cmd.Parameters.AddWithValue("@id", txtStudentID.Text);
+                            cmd.Parameters.AddWithValue("@id", studentId);
                             cmd.ExecuteNonQuery();
-
-                            MessageBox.Show("Record deleted successfully.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadStudentRecords();
-                            ClearFields();
                         }
                     }
+
+                    MessageBox.Show("Record moved to Recycle Bin.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadStudentRecords(); // Refresh main interface view
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error deleting record: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Error moving record: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            // ============================================================
-            // 1. INDIVIDUAL EMPTY FIELD & FORMAT VALIDATIONS
-            // ============================================================
-
-            string studentIdInput = txtStudentID.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(studentIdInput))
+            if (string.IsNullOrWhiteSpace(txtStudentID.Text) || string.IsNullOrWhiteSpace(txtFullName.Text) ||
+                string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPhone.Text))
             {
-                MessageBox.Show("Student ID field cannot be left blank.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtStudentID.Focus();
+                MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // STRICT FORMAT VALIDATION: Enforces YYYY-XXXXX-CC-N pattern (e.g., 2024-00174-SM-0)
-            string idPattern = @"^\d{4}-\d{5}-[A-Za-z]{2}-\d$";
-            if (!System.Text.RegularExpressions.Regex.IsMatch(studentIdInput, idPattern))
-            {
-                MessageBox.Show("Invalid Student ID format!\n\nThe ID must match the official pattern: YYYY-XXXXX-CC-N\nExample: 2024-00174-SM-0",
-                                "Invalid Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtStudentID.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtFullName.Text))
-            {
-                MessageBox.Show("Full Name field cannot be left blank.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtFullName.Focus();
-                return;
-            }
-
-            if (cmbGender.SelectedIndex == -1)
-            {
-                MessageBox.Show("Please select a valid option for Gender.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cmbGender.DroppedDown = true;
-                return;
-            }
-
-            if (cmbCourse.SelectedIndex == -1)
-            {
-                MessageBox.Show("Please select a valid Academic Course.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cmbCourse.DroppedDown = true;
-                return;
-            }
-
-            if (cmbYear.SelectedIndex == -1)
-            {
-                MessageBox.Show("Please select a Year Level.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cmbYear.DroppedDown = true;
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtEmail.Text))
-            {
-                MessageBox.Show("Email Address field cannot be left blank.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtEmail.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtPhone.Text))
-            {
-                MessageBox.Show("Phone Number field cannot be left blank.", "Missing Field", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPhone.Focus();
-                return;
-            }
-
-            // ============================================================
-            // 2. EMAIL FORMAT REGEX VALIDATION
-            // ============================================================
-            if (!IsValidEmail(txtEmail.Text.Trim()))
-            {
-                MessageBox.Show("The email address structure you entered is invalid.\nPlease use a proper format (e.g., student@email.com).", "Invalid Email Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtEmail.Focus();
-                return;
-            }
-
-            // ============================================================
-            // 3. SEPARATE DATABASE DUPLICATE CHECKS
-            // ============================================================
-            if (IsDuplicateExcludingSelf("student_id", studentIdInput))
-            {
-                MessageBox.Show("This Student ID is already assigned to an existing record.", "Duplicate Student ID", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsDuplicateExcludingSelf("full_name", txtFullName.Text.Trim()))
-            {
-                MessageBox.Show("A student with this Full Name already exists in the records.", "Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsDuplicateExcludingSelf("email", txtEmail.Text.Trim()))
-            {
-                MessageBox.Show("This Email Address is already registered to another student.", "Duplicate Email", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsDuplicateExcludingSelf("phone", txtPhone.Text.Trim()))
-            {
-                MessageBox.Show("This Phone Number is already registered to another student.", "Duplicate Phone Number", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // ============================================================
-            // 4. DATABASE INSERT OPERATION
-            // ============================================================
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(connString))
                 {
                     conn.Open();
-                    string query = "INSERT INTO students (student_id, full_name, date_of_birth, gender, course, year_level, email, phone) " +
-                                   "VALUES (@id, @name, @dob, @gender, @course, @year, @email, @phone)";
 
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    string checkQuery = "SELECT student_id, full_name, phone, email FROM students " +
+                                         "WHERE student_id = @id OR full_name = @name OR phone = @phone OR email = @email";
+
+                    using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn))
                     {
-                        cmd.Parameters.AddWithValue("@id", studentIdInput.ToUpper());
-                        cmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
-                        cmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
-                        cmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem.ToString());
-                        cmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue.ToString());
-                        cmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem.ToString());
-                        cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
-                        cmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@id", txtStudentID.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
 
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Student record added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        LoadStudentRecords();
-                        ClearFields();
+                        using (MySqlDataReader reader = checkCmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["student_id"].ToString().Equals(txtStudentID.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Duplicate Error: This Student ID already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                                if (reader["full_name"].ToString().Equals(txtFullName.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Duplicate Error: This Full Name already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                                if (reader["phone"].ToString().Equals(txtPhone.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Duplicate Error: This Phone Number already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                                if (reader["email"].ToString().Equals(txtEmail.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Duplicate Error: This Email Address already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                            }
+                        }
                     }
+
+                    string insertQuery = "INSERT INTO students (student_id, full_name, date_of_birth, gender, course, year_level, email, phone, status) " +
+                                         "VALUES (@id, @name, @dob, @gender, @course, @year, @email, @phone, 'Active')";
+
+                    using (MySqlCommand insertCmd = new MySqlCommand(insertQuery, conn))
+                    {
+                        insertCmd.Parameters.AddWithValue("@id", txtStudentID.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
+                        insertCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem?.ToString() ?? "");
+                        insertCmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue?.ToString() ?? "");
+                        insertCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem?.ToString() ?? "");
+                        insertCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+
+                        insertCmd.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show("New student record successfully added!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadStudentRecords();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error adding record: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { MessageBox.Show("Database tracking write execution failure: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
+        
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -838,75 +773,76 @@ namespace Student_Record_System
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            // 1. Validation: Ensure a student record is selected
-            if (string.IsNullOrEmpty(txtStudentID.Text))
+            if (dgvStudents.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a student from the list to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a student record from the table to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Input Validation: Check for empty values
-            if (string.IsNullOrWhiteSpace(txtFullName.Text) || cmbGender.SelectedIndex == -1 ||
-                cmbCourse.SelectedIndex == -1 || cmbYear.SelectedIndex == -1 ||
-                string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPhone.Text))
-            {
-                MessageBox.Show("Please fill out all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            string originalStudentID = dgvStudents.SelectedRows[0].Cells["Student ID"].Value.ToString();
 
-            string currentStudentId = txtStudentID.Text.Trim();
-
-            // 4. Duplicate Validation: Separate checks excluding the student's own record
-            if (IsDuplicateExcludingSelf("full_name", txtFullName.Text.Trim(), currentStudentId))
-            {
-                MessageBox.Show("Another student with this exact Full Name already exists.", "Duplicate Name", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsDuplicateExcludingSelf("email", txtEmail.Text.Trim(), currentStudentId))
-            {
-                MessageBox.Show("This Email Address is already taken by another student record.", "Duplicate Email", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (IsDuplicateExcludingSelf("phone", txtPhone.Text.Trim(), currentStudentId))
-            {
-                MessageBox.Show("This Phone Number is already in use by another student record.", "Duplicate Phone Number", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            // 4. Update Record in Database
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(connString))
                 {
                     conn.Open();
-                    string query = "UPDATE students SET full_name=@name, date_of_birth=@dob, gender=@gender, " +
-                                   "course=@course, year_level=@year, email=@email, phone=@phone WHERE student_id=@id";
 
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    string checkQuery = "SELECT full_name, phone, email FROM students " +
+                                         "WHERE (full_name = @name OR phone = @phone OR email = @email) AND student_id != @originalId";
+
+                    using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn))
                     {
-                        cmd.Parameters.AddWithValue("@id", currentStudentId);
-                        cmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
-                        cmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
-                        cmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem.ToString());
-                        cmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue.ToString());
-                        cmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem.ToString());
-                        cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
-                        cmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@originalId", originalStudentID);
 
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Student record updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                        LoadStudentRecords();
-                        ClearFields();
+                        using (MySqlDataReader reader = checkCmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                if (reader["full_name"].ToString().Equals(txtFullName.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Update Error: This Full Name is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                                if (reader["phone"].ToString().Equals(txtPhone.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Update Error: This Phone Number is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                                if (reader["email"].ToString().Equals(txtEmail.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Update Error: This Email Address is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
+                            }
+                        }
                     }
+
+                    string updateQuery = "UPDATE students SET full_name = @name, date_of_birth = @dob, gender = @gender, " +
+                                         "course = @course, year_level = @year, email = @email, phone = @phone " +
+                                         "WHERE student_id = @originalId";
+
+                    using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn))
+                    {
+                        updateCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
+                        updateCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem?.ToString() ?? "");
+                        updateCmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue?.ToString() ?? "");
+                        updateCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem?.ToString() ?? "");
+                        updateCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@originalId", originalStudentID);
+
+                        updateCmd.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show("Student record updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadStudentRecords();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error updating record: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            catch (Exception ex) { MessageBox.Show("Database update row modification error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -961,5 +897,150 @@ namespace Student_Record_System
                 }
             }
         }
+
+        private void btnOpenRecycleBin_Click(object sender, EventArgs e)
+        {
+            // Center the panel dynamically inside the main workspace viewport frame
+            pnlRecycleBin.Left = (this.ClientSize.Width - pnlRecycleBin.Width) / 2;
+            pnlRecycleBin.Top = (this.ClientSize.Height - pnlRecycleBin.Height) / 2;
+
+            // Display panel and load deleted datasets
+            pnlRecycleBin.Visible = true;
+            pnlRecycleBin.BringToFront();
+
+            ApplyRecycleBinGridStyles();
+            LoadTrashRecords();
+
+        }
+
+        private void btnCloseRecycleBin_Click(object sender, EventArgs e)
+        {
+            // Hide the panel pop-up view structure
+            pnlRecycleBin.Visible = false;
+
+            // Re-sync and refresh the active student database grid view instantly
+            LoadStudentRecords();
+        }
+        private void LoadTrashRecords()
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = "SELECT student_id AS 'Student ID', full_name AS 'Full Name', course AS 'Course', year_level AS 'Year' " +
+                                   "FROM students WHERE status = 'Archived'";
+
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        using (MySqlDataAdapter adapter = new MySqlDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            adapter.Fill(dt);
+                            dgvDeletedStudents.DataSource = dt;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading trash datasets: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnRestore_Click(object sender, EventArgs e)
+        {
+            if (dgvDeletedStudents.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an archived record row to restore.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string studentId = dgvDeletedStudents.SelectedRows[0].Cells["Student ID"].Value.ToString();
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connString))
+                {
+                    conn.Open();
+                    string query = "UPDATE students SET status = 'Active' WHERE student_id = @id";
+                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@id", studentId);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show("Student record successfully restored to active profiles database roster!", "Restored", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadTrashRecords();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error restoring data row: " + ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnPermanentDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvDeletedStudents.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select an archived record row to delete permanently.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string studentId = dgvDeletedStudents.SelectedRows[0].Cells["Student ID"].Value.ToString();
+
+            DialogResult confirm = MessageBox.Show("This action cannot be undone. Permanently wipe out this student record from database storage storage layers?",
+                "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (confirm == DialogResult.Yes)
+            {
+                try
+                {
+                    using (MySqlConnection conn = new MySqlConnection(connString))
+                    {
+                        conn.Open();
+                        string query = "DELETE FROM students WHERE student_id = @id";
+                        using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                        {
+                            cmd.Parameters.AddWithValue("@id", studentId);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    MessageBox.Show("Record permanently wiped out.", "Deleted", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadTrashRecords();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error dropping row execution: " + ex.Message, "System Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+        private void ApplyRecycleBinGridStyles()
+        {
+            dgvDeletedStudents.EnableHeadersVisualStyles = false;
+            dgvDeletedStudents.ReadOnly = true;
+            dgvDeletedStudents.RowHeadersVisible = false;
+            dgvDeletedStudents.AllowUserToAddRows = false;
+            dgvDeletedStudents.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvDeletedStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvDeletedStudents.BackgroundColor = Color.White;
+            dgvDeletedStudents.BorderStyle = BorderStyle.None;
+            dgvDeletedStudents.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgvDeletedStudents.GridColor = Color.FromArgb(242, 242, 242);
+            dgvDeletedStudents.RowTemplate.Height = 32;
+
+            // Apply consistent maroon aesthetics for the layout header parameters
+            dgvDeletedStudents.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+            dgvDeletedStudents.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 0, 0);
+            dgvDeletedStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvDeletedStudents.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
+            dgvDeletedStudents.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgvDeletedStudents.ColumnHeadersHeight = 36;
+
+            // Row Item selections styles tracking values
+            dgvDeletedStudents.DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 222, 222);
+            dgvDeletedStudents.DefaultCellStyle.SelectionForeColor = Color.FromArgb(128, 0, 0);
+        }
     }
 }
+

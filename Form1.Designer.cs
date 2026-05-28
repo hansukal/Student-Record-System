@@ -64,6 +64,17 @@
             btnRefresh = new RoundedButton();
             dgvStudents = new DataGridView();
             btnExport = new RoundedButton();
+            btnOpenRecycleBin = new RoundedButton();
+            pnlRecycleBin = new Panel();
+            panel10 = new Panel();
+            label3 = new Label();
+            label12 = new Label();
+            panel11 = new Panel();
+            pictureBox2 = new PictureBox();
+            btnCloseRecycleBin = new RoundedButton();
+            btnPermanentDelete = new RoundedButton();
+            btnRestore = new RoundedButton();
+            dgvDeletedStudents = new DataGridView();
             roundedGroupBox1.SuspendLayout();
             panel9.SuspendLayout();
             panel8.SuspendLayout();
@@ -76,6 +87,11 @@
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgvStudents).BeginInit();
+            pnlRecycleBin.SuspendLayout();
+            panel10.SuspendLayout();
+            panel11.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgvDeletedStudents).BeginInit();
             SuspendLayout();
             // 
             // roundedGroupBox1
@@ -270,6 +286,7 @@
             // 
             // txtStudentID
             // 
+            txtStudentID.BackColor = Color.White;
             txtStudentID.BorderStyle = BorderStyle.None;
             txtStudentID.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold);
             txtStudentID.ForeColor = Color.Maroon;
@@ -477,7 +494,7 @@
             btnAdd.Name = "btnAdd";
             btnAdd.Padding = new Padding(30, 0, 0, 0);
             btnAdd.PressedColor = Color.FromArgb(60, 0, 0);
-            btnAdd.Size = new Size(217, 50);
+            btnAdd.Size = new Size(185, 50);
             btnAdd.TabIndex = 2;
             btnAdd.Text = "Add Profile   ";
             btnAdd.TextAlign = ContentAlignment.MiddleLeft;
@@ -499,14 +516,14 @@
             btnUpdate.FlatStyle = FlatStyle.Flat;
             btnUpdate.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
             btnUpdate.ForeColor = Color.White;
-            btnUpdate.HoverColor = Color.FromArgb(160, 0, 0);
+            btnUpdate.HoverColor = Color.RoyalBlue;
             btnUpdate.Image = Properties.Resources.pencil__1_;
             btnUpdate.ImageAlign = ContentAlignment.MiddleLeft;
-            btnUpdate.Location = new Point(430, 382);
+            btnUpdate.Location = new Point(230, 382);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Padding = new Padding(30, 0, 0, 0);
             btnUpdate.PressedColor = Color.FromArgb(60, 0, 0);
-            btnUpdate.Size = new Size(217, 50);
+            btnUpdate.Size = new Size(161, 50);
             btnUpdate.TabIndex = 3;
             btnUpdate.Text = "Update   ";
             btnUpdate.TextImageRelation = TextImageRelation.ImageAboveText;
@@ -527,14 +544,14 @@
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
             btnDelete.ForeColor = Color.White;
-            btnDelete.HoverColor = Color.FromArgb(160, 0, 0);
+            btnDelete.HoverColor = Color.DimGray;
             btnDelete.Image = (Image)resources.GetObject("btnDelete.Image");
             btnDelete.ImageAlign = ContentAlignment.MiddleLeft;
-            btnDelete.Location = new Point(840, 382);
+            btnDelete.Location = new Point(416, 382);
             btnDelete.Name = "btnDelete";
             btnDelete.Padding = new Padding(30, 0, 0, 0);
             btnDelete.PressedColor = Color.FromArgb(60, 0, 0);
-            btnDelete.Size = new Size(217, 50);
+            btnDelete.Size = new Size(161, 50);
             btnDelete.TabIndex = 4;
             btnDelete.Text = "Delete   ";
             btnDelete.TextImageRelation = TextImageRelation.ImageAboveText;
@@ -555,14 +572,14 @@
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
             btnRefresh.ForeColor = Color.White;
-            btnRefresh.HoverColor = Color.FromArgb(160, 0, 0);
+            btnRefresh.HoverColor = Color.Blue;
             btnRefresh.Image = (Image)resources.GetObject("btnRefresh.Image");
             btnRefresh.ImageAlign = ContentAlignment.MiddleLeft;
-            btnRefresh.Location = new Point(1250, 382);
+            btnRefresh.Location = new Point(602, 382);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Padding = new Padding(30, 0, 0, 0);
             btnRefresh.PressedColor = Color.FromArgb(60, 0, 0);
-            btnRefresh.Size = new Size(217, 50);
+            btnRefresh.Size = new Size(161, 50);
             btnRefresh.TabIndex = 5;
             btnRefresh.Text = "Refresh   ";
             btnRefresh.TextImageRelation = TextImageRelation.ImageAboveText;
@@ -596,14 +613,14 @@
             btnExport.FlatStyle = FlatStyle.Flat;
             btnExport.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
             btnExport.ForeColor = Color.White;
-            btnExport.HoverColor = Color.FromArgb(160, 0, 0);
+            btnExport.HoverColor = Color.Green;
             btnExport.Image = (Image)resources.GetObject("btnExport.Image");
             btnExport.ImageAlign = ContentAlignment.MiddleLeft;
-            btnExport.Location = new Point(1660, 382);
+            btnExport.Location = new Point(788, 382);
             btnExport.Name = "btnExport";
             btnExport.Padding = new Padding(30, 0, 0, 0);
             btnExport.PressedColor = Color.FromArgb(60, 0, 0);
-            btnExport.Size = new Size(217, 50);
+            btnExport.Size = new Size(161, 50);
             btnExport.TabIndex = 7;
             btnExport.Text = "Export  ";
             btnExport.TextImageRelation = TextImageRelation.ImageAboveText;
@@ -612,11 +629,197 @@
             btnExport.UseVisualStyleBackColor = false;
             btnExport.Click += btnExport_Click;
             // 
+            // btnOpenRecycleBin
+            // 
+            btnOpenRecycleBin.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnOpenRecycleBin.BackColor = Color.Maroon;
+            btnOpenRecycleBin.BackgroundImageLayout = ImageLayout.None;
+            btnOpenRecycleBin.BorderColor = SystemColors.Control;
+            btnOpenRecycleBin.BorderThickness = 0;
+            btnOpenRecycleBin.BottomLeftRadius = 15;
+            btnOpenRecycleBin.BottomRightRadius = 15;
+            btnOpenRecycleBin.FlatAppearance.BorderSize = 0;
+            btnOpenRecycleBin.FlatStyle = FlatStyle.Flat;
+            btnOpenRecycleBin.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
+            btnOpenRecycleBin.ForeColor = Color.White;
+            btnOpenRecycleBin.HoverColor = Color.DimGray;
+            btnOpenRecycleBin.Image = (Image)resources.GetObject("btnOpenRecycleBin.Image");
+            btnOpenRecycleBin.ImageAlign = ContentAlignment.MiddleLeft;
+            btnOpenRecycleBin.Location = new Point(1725, 382);
+            btnOpenRecycleBin.Name = "btnOpenRecycleBin";
+            btnOpenRecycleBin.Padding = new Padding(30, 0, 0, 0);
+            btnOpenRecycleBin.PressedColor = Color.FromArgb(60, 0, 0);
+            btnOpenRecycleBin.Size = new Size(153, 50);
+            btnOpenRecycleBin.TabIndex = 8;
+            btnOpenRecycleBin.Text = "Trash Bin";
+            btnOpenRecycleBin.TextAlign = ContentAlignment.TopCenter;
+            btnOpenRecycleBin.TextImageRelation = TextImageRelation.ImageAboveText;
+            btnOpenRecycleBin.TopLeftRadius = 15;
+            btnOpenRecycleBin.TopRightRadius = 15;
+            btnOpenRecycleBin.UseVisualStyleBackColor = false;
+            btnOpenRecycleBin.Click += btnOpenRecycleBin_Click;
+            // 
+            // pnlRecycleBin
+            // 
+            pnlRecycleBin.BackColor = Color.White;
+            pnlRecycleBin.BorderStyle = BorderStyle.FixedSingle;
+            pnlRecycleBin.Controls.Add(panel10);
+            pnlRecycleBin.Controls.Add(btnCloseRecycleBin);
+            pnlRecycleBin.Controls.Add(btnPermanentDelete);
+            pnlRecycleBin.Controls.Add(btnRestore);
+            pnlRecycleBin.Controls.Add(dgvDeletedStudents);
+            pnlRecycleBin.Location = new Point(169, 438);
+            pnlRecycleBin.Name = "pnlRecycleBin";
+            pnlRecycleBin.Size = new Size(800, 450);
+            pnlRecycleBin.TabIndex = 9;
+            pnlRecycleBin.Visible = false;
+            // 
+            // panel10
+            // 
+            panel10.BackColor = Color.Maroon;
+            panel10.Controls.Add(label3);
+            panel10.Controls.Add(label12);
+            panel10.Controls.Add(panel11);
+            panel10.Dock = DockStyle.Top;
+            panel10.Location = new Point(0, 0);
+            panel10.Name = "panel10";
+            panel10.Size = new Size(798, 124);
+            panel10.TabIndex = 4;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(155, 67);
+            label3.Name = "label3";
+            label3.Size = new Size(130, 31);
+            label3.TabIndex = 6;
+            label3.Text = "Recycle Bin";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI", 19.8F, FontStyle.Bold);
+            label12.ForeColor = Color.White;
+            label12.Location = new Point(155, 22);
+            label12.Name = "label12";
+            label12.Size = new Size(465, 45);
+            label12.TabIndex = 5;
+            label12.Text = "STUDENT RECORD CENTRAL";
+            // 
+            // panel11
+            // 
+            panel11.BackColor = Color.Maroon;
+            panel11.Controls.Add(pictureBox2);
+            panel11.Dock = DockStyle.Top;
+            panel11.Location = new Point(0, 0);
+            panel11.Name = "panel11";
+            panel11.Size = new Size(798, 124);
+            panel11.TabIndex = 7;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = (Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.Location = new Point(33, 10);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(105, 96);
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.TabIndex = 3;
+            pictureBox2.TabStop = false;
+            // 
+            // btnCloseRecycleBin
+            // 
+            btnCloseRecycleBin.BackColor = Color.Maroon;
+            btnCloseRecycleBin.BorderColor = Color.FromArgb(74, 0, 0);
+            btnCloseRecycleBin.BorderThickness = 1;
+            btnCloseRecycleBin.BottomLeftRadius = 15;
+            btnCloseRecycleBin.BottomRightRadius = 15;
+            btnCloseRecycleBin.FlatAppearance.BorderSize = 0;
+            btnCloseRecycleBin.FlatStyle = FlatStyle.Flat;
+            btnCloseRecycleBin.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold);
+            btnCloseRecycleBin.ForeColor = Color.White;
+            btnCloseRecycleBin.HoverColor = Color.FromArgb(160, 0, 0);
+            btnCloseRecycleBin.Location = new Point(645, 128);
+            btnCloseRecycleBin.Name = "btnCloseRecycleBin";
+            btnCloseRecycleBin.PressedColor = Color.FromArgb(60, 0, 0);
+            btnCloseRecycleBin.Size = new Size(150, 50);
+            btnCloseRecycleBin.TabIndex = 3;
+            btnCloseRecycleBin.Text = "Exit";
+            btnCloseRecycleBin.TopLeftRadius = 15;
+            btnCloseRecycleBin.TopRightRadius = 15;
+            btnCloseRecycleBin.UseVisualStyleBackColor = false;
+            btnCloseRecycleBin.Click += btnCloseRecycleBin_Click;
+            // 
+            // btnPermanentDelete
+            // 
+            btnPermanentDelete.BackColor = Color.Maroon;
+            btnPermanentDelete.BorderColor = Color.FromArgb(74, 0, 0);
+            btnPermanentDelete.BorderThickness = 1;
+            btnPermanentDelete.BottomLeftRadius = 15;
+            btnPermanentDelete.BottomRightRadius = 15;
+            btnPermanentDelete.FlatAppearance.BorderSize = 0;
+            btnPermanentDelete.FlatStyle = FlatStyle.Flat;
+            btnPermanentDelete.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold);
+            btnPermanentDelete.ForeColor = Color.White;
+            btnPermanentDelete.HoverColor = Color.FromArgb(160, 0, 0);
+            btnPermanentDelete.Location = new Point(165, 128);
+            btnPermanentDelete.Name = "btnPermanentDelete";
+            btnPermanentDelete.PressedColor = Color.FromArgb(60, 0, 0);
+            btnPermanentDelete.Size = new Size(211, 50);
+            btnPermanentDelete.TabIndex = 2;
+            btnPermanentDelete.Text = "Permanently Delete";
+            btnPermanentDelete.TopLeftRadius = 15;
+            btnPermanentDelete.TopRightRadius = 15;
+            btnPermanentDelete.UseVisualStyleBackColor = false;
+            btnPermanentDelete.Click += btnPermanentDelete_Click;
+            // 
+            // btnRestore
+            // 
+            btnRestore.BackColor = Color.Maroon;
+            btnRestore.BorderColor = Color.FromArgb(74, 0, 0);
+            btnRestore.BorderThickness = 1;
+            btnRestore.BottomLeftRadius = 15;
+            btnRestore.BottomRightRadius = 15;
+            btnRestore.FlatAppearance.BorderSize = 0;
+            btnRestore.FlatStyle = FlatStyle.Flat;
+            btnRestore.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnRestore.ForeColor = Color.White;
+            btnRestore.HoverColor = Color.FromArgb(160, 0, 0);
+            btnRestore.Image = (Image)resources.GetObject("btnRestore.Image");
+            btnRestore.ImageAlign = ContentAlignment.MiddleLeft;
+            btnRestore.Location = new Point(4, 128);
+            btnRestore.Name = "btnRestore";
+            btnRestore.PressedColor = Color.FromArgb(60, 0, 0);
+            btnRestore.Size = new Size(155, 50);
+            btnRestore.TabIndex = 1;
+            btnRestore.Text = "Restore   ";
+            btnRestore.TextAlign = ContentAlignment.MiddleLeft;
+            btnRestore.TextImageRelation = TextImageRelation.ImageBeforeText;
+            btnRestore.TopLeftRadius = 15;
+            btnRestore.TopRightRadius = 15;
+            btnRestore.UseVisualStyleBackColor = false;
+            btnRestore.Click += btnRestore_Click;
+            // 
+            // dgvDeletedStudents
+            // 
+            dgvDeletedStudents.BackgroundColor = Color.White;
+            dgvDeletedStudents.BorderStyle = BorderStyle.None;
+            dgvDeletedStudents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvDeletedStudents.Location = new Point(4, 184);
+            dgvDeletedStudents.Name = "dgvDeletedStudents";
+            dgvDeletedStudents.RowHeadersWidth = 51;
+            dgvDeletedStudents.Size = new Size(793, 263);
+            dgvDeletedStudents.TabIndex = 0;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            AutoSizeMode = AutoSizeMode.GrowAndShrink;
             ClientSize = new Size(1902, 1033);
+            Controls.Add(pnlRecycleBin);
+            Controls.Add(btnOpenRecycleBin);
             Controls.Add(btnExport);
             Controls.Add(dgvStudents);
             Controls.Add(btnRefresh);
@@ -629,7 +832,6 @@
             Name = "Form1";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Student Record System";
-            WindowState = FormWindowState.Maximized;
             Load += Form1_Load;
             Shown += Form1_Shown;
             TextChanged += Form1_TextChanged;
@@ -651,6 +853,12 @@
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dgvStudents).EndInit();
+            pnlRecycleBin.ResumeLayout(false);
+            panel10.ResumeLayout(false);
+            panel10.PerformLayout();
+            panel11.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgvDeletedStudents).EndInit();
             ResumeLayout(false);
         }
 
@@ -691,5 +899,16 @@
         private Panel panel8;
         private Panel panel9;
         private RoundedButton btnExport;
+        private RoundedButton btnOpenRecycleBin;
+        private Panel pnlRecycleBin;
+        private DataGridView dgvDeletedStudents;
+        private Panel panel10;
+        private Label label3;
+        private Label label12;
+        private Panel panel11;
+        private PictureBox pictureBox2;
+        private RoundedButton btnCloseRecycleBin;
+        private RoundedButton btnPermanentDelete;
+        private RoundedButton btnRestore;
     }
 }
