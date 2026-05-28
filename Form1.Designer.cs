@@ -506,7 +506,6 @@
             // 
             // btnUpdate
             // 
-            btnUpdate.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnUpdate.BackColor = Color.Maroon;
             btnUpdate.BorderColor = Color.FromArgb(74, 0, 0);
             btnUpdate.BorderThickness = 1;
@@ -534,7 +533,6 @@
             // 
             // btnDelete
             // 
-            btnDelete.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnDelete.BackColor = Color.Maroon;
             btnDelete.BorderColor = Color.FromArgb(74, 0, 0);
             btnDelete.BorderThickness = 1;
@@ -562,7 +560,6 @@
             // 
             // btnRefresh
             // 
-            btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnRefresh.BackColor = Color.Maroon;
             btnRefresh.BorderColor = Color.FromArgb(74, 0, 0);
             btnRefresh.BorderThickness = 1;
@@ -597,13 +594,12 @@
             dgvStudents.Location = new Point(20, 448);
             dgvStudents.Name = "dgvStudents";
             dgvStudents.RowHeadersWidth = 51;
-            dgvStudents.Size = new Size(1858, 560);
+            dgvStudents.Size = new Size(1877, 560);
             dgvStudents.TabIndex = 6;
             dgvStudents.CellClick += dgvStudents_CellClick;
             // 
             // btnExport
             // 
-            btnExport.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnExport.BackColor = Color.Maroon;
             btnExport.BorderColor = Color.FromArgb(74, 0, 0);
             btnExport.BorderThickness = 1;
@@ -828,6 +824,7 @@
             Controls.Add(btnAdd);
             Controls.Add(panel1);
             Controls.Add(roundedGroupBox1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(1024, 768);
             Name = "Form1";
             StartPosition = FormStartPosition.CenterParent;

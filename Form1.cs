@@ -59,40 +59,6 @@ namespace Student_Record_System
                 MessageBox.Show("Failed to save data: " + ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-
-        private bool IsDuplicateExcludingSelf(string columnName, string value, string currentId = "")
-        {
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(connString))
-                {
-                    conn.Open();
-                    // If checking during an Update, exclude the current student's ID from the search
-                    string query = string.IsNullOrEmpty(currentId)
-                        ? $"SELECT COUNT(*) FROM students WHERE {columnName} = @value"
-                        : $"SELECT COUNT(*) FROM students WHERE {columnName} = @value AND student_id != @id";
-
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@value", value);
-                        if (!string.IsNullOrEmpty(currentId))
-                        {
-                            cmd.Parameters.AddWithValue("@id", currentId);
-                        }
-
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-                        return count > 0; // Returns true if a duplicate is found
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error checking duplicates: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-        }
-
         private void LoadStudentRecords()
         {
             try
@@ -101,7 +67,7 @@ namespace Student_Record_System
                 {
                     conn.Open();
 
-                    // FIX: Added "WHERE status = 'Active'" so deleted records don't show here
+                    // Query selects all active student profiles from the MySQL backend database
                     string query = "SELECT student_id AS 'Student ID', full_name AS 'Full Name', date_of_birth AS 'Date of Birth', " +
                                    "gender AS 'Gender', course AS 'Course', year_level AS 'Year', email AS 'Email', phone AS 'Phone' " +
                                    "FROM students WHERE status = 'Active'";
@@ -113,55 +79,91 @@ namespace Student_Record_System
                             DataTable dt = new DataTable();
                             adapter.Fill(dt);
 
+                            // Clear out old data sources and columns before rebuilding structural frames
                             dgvStudents.DataSource = null;
                             dgvStudents.Columns.Clear();
 
+                            // Create and append the manual serial layout sequence row column
                             DataGridViewTextBoxColumn countColumn = new DataGridViewTextBoxColumn();
                             countColumn.Name = "No";
                             countColumn.HeaderText = "#";
                             dgvStudents.Columns.Add(countColumn);
 
+                            // Bind the populated MySQL data table records directly to the viewer grid viewport
                             dgvStudents.DataSource = dt;
 
+                            // Dynamically calculate and stamp sequential serial index values row by row
                             for (int i = 0; i < dt.Rows.Count; i++)
                             {
                                 dgvStudents.Rows[i].Cells["No"].Value = (i + 1).ToString();
                             }
 
+                            // 1. Force structural sizing calculations to Fill mode first
                             dgvStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                            for (int i = 0; i < dgvStudents.Columns.Count; i++)
-                            {
-                                DataGridViewColumn col = dgvStudents.Columns[i];
-                                col.SortMode = DataGridViewColumnSortMode.NotSortable;
-
-                                if (col.Name == "No") { col.FillWeight = 35; }
-                                else if (col.HeaderText == "Student ID") { col.FillWeight = 115; }
-                                else if (col.HeaderText == "Full Name") { col.FillWeight = 180; }
-                                else if (col.HeaderText == "Date of Birth") { col.FillWeight = 110; }
-                                else if (col.HeaderText == "Gender") { col.FillWeight = 75; }
-                                else if (col.HeaderText == "Course") { col.FillWeight = 110; }
-                                else if (col.HeaderText == "Year") { col.FillWeight = 75; }
-                                else if (col.HeaderText == "Email") { col.FillWeight = 165; }
-                                else if (col.HeaderText == "Phone") { col.FillWeight = 115; }
-                            }
-
+                            // 2. Proportional layout weights optimized for your 1877px widescreen layout viewport
                             for (int i = 0; i < dgvStudents.Columns.Count; i++)
                             {
                                 DataGridViewColumn col = dgvStudents.Columns[i];
 
-                                if (col.HeaderText == "Full Name")
+                                if (col.Name == "No")
                                 {
-                                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
-                                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                                    col.FillWeight = 30; // Keeps the row index number column narrow
+                                    col.SortMode = DataGridViewColumnSortMode.NotSortable; // Disabled sorting to prevent data shift glitches
                                 }
                                 else
                                 {
-                                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                    // Enables clicking headers to sort strings, numbers, and dates automatically
+                                    col.SortMode = DataGridViewColumnSortMode.Automatic;
+
+                                    if (col.HeaderText == "Student ID") { col.FillWeight = 110; }
+                                    else if (col.HeaderText == "Full Name") { col.FillWeight = 180; }
+                                    else if (col.HeaderText == "Date of Birth") { col.FillWeight = 110; }
+                                    else if (col.HeaderText == "Gender") { col.FillWeight = 75; }
+                                    else if (col.HeaderText == "Course") { col.FillWeight = 110; }
+                                    else if (col.HeaderText == "Year") { col.FillWeight = 70; } // Squeezed narrow so digits stay close together
+                                    else if (col.HeaderText == "Email") { col.FillWeight = 175; }
+                                    else if (col.HeaderText == "Phone") { col.FillWeight = 115; }
                                 }
                             }
 
+                            // 3. Dynamic Axis Alignment Matrix (Widescreen Counter-Balance Engine)
+                            for (int i = 0; i < dgvStudents.Columns.Count; i++)
+                            {
+                                DataGridViewColumn col = dgvStudents.Columns[i];
+
+                                // Clear out all default paddings completely first to ensure total layout control
+                                col.DefaultCellStyle.Padding = new Padding(0);
+                                col.HeaderCell.Style.Padding = new Padding(0);
+
+                                if (col.HeaderText == "Full Name")
+                                {
+                                    // Left align text strings normally for easy reading down the column line
+                                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                                }
+                                else if (col.Name == "No" || col.HeaderText == "#")
+                                {
+                                    // FIXED: The '#' column has NO sort arrow glyph. 
+                                    // We center it perfectly with zero padding so it aligns with the digits below.
+                                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                    col.HeaderCell.Style.Padding = new Padding(0);
+                                }
+                                else
+                                {
+                                    // Targets all OTHER centered columns that ARE sortable (ID, DOB, Gender, Course, Year, Email, Phone)
+                                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                                    // Adds a 16px left buffer onto the header cell text bounding box.
+                                    // This mirrors and cancels out the 16px sorting arrow gap on the right, 
+                                    // centering both elements on a shared vertical axis across your 1877px widescreen layout.
+                                    col.HeaderCell.Style.Padding = new Padding(16, 0, 0, 0);
+                                }
+                            }
+
+                            // Keep the table looking polished by clearing out initial row background highlighters
                             dgvStudents.ClearSelection();
                         }
                     }
@@ -169,7 +171,8 @@ namespace Student_Record_System
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error loading active data records from the database: " + ex.Message,
+                                "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -427,19 +430,27 @@ namespace Student_Record_System
             dgvStudents.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
             dgvStudents.AllowUserToAddRows = false;
 
+            // FIX: Tells the grid to instantly fix your '#' row numbers whenever a header is sorted
+            dgvStudents.Sorted += new EventHandler(dgvStudents_Sorted);
+
             dtpDOB.MinDate = new DateTime(1901, 1, 1);
             dtpDOB.MaxDate = new DateTime(2015, 12, 31);
 
             List<CourseItem> courses = new List<CourseItem>
     {
-        new CourseItem("BSA", "BSA Bachelor of Science in Accountancy"),
-        new CourseItem("BSCpE", "BSCpE Bachelor of Science in Computer Engineering"),
-        new CourseItem("BSIT", "BSIT Bachelor of Science in Information Technology"),
-        new CourseItem("BSENTREP", "BSENTREP Bachelor of Science in Entrepreneurship"),
-        new CourseItem("BSHM", "BSHM Bachelor of Science in Hospitality Management"),
-        new CourseItem("BSEDEN", "BSEDEN Bachelor of Secondary Education major in English"),
-        new CourseItem("BSEDMT", "BSEDMT Bachelor of Secondary Education major in Mathematics"),
-        new CourseItem("DOMT", "DOMT Diploma in Office Management Technology")
+        new CourseItem("BSA", "BSA - Bachelor of Science in Accountancy"),
+        new CourseItem("BSCE", "BSCE - Bachelor of Science in Civil Engineering"),
+        new CourseItem("BSCpE", "BSCpE - Bachelor of Science in Computer Engineering"),
+        new CourseItem("BSECE", "BSECE - Bachelor of Science in Electronics Engineering"),
+        new CourseItem("BSIT", "BSIT - Bachelor of Science in Information Technology"),
+        new CourseItem("BSBA-HRM", "BSBA-HRM - Bachelor of Science in Business Administration major in Human Resource Management"),
+        new CourseItem("BSBA-MM", "BSBA-MM - Bachelor of Science in Business Administration major in Marketing Management"),
+        new CourseItem("BSENTREP", "BSENTREP - Bachelor of Science in Entrepreneurship"),
+        new CourseItem("BSHM", "BSHM - Bachelor of Science in Hospitality Management"),
+        new CourseItem("BSED-ENG", "BSED-ENG - Bachelor of Secondary Education major in English"),
+        new CourseItem("BSED-MATH", "BSED-MATH - Bachelor of Secondary Education major in Mathematics"),
+        new CourseItem("DICT", "DICT - Diploma in Information Communication Technology"),
+        new CourseItem("DOMT", "DOMT - Diploma in Office Management Technology")
     };
 
             cmbCourse.DataSource = courses;
@@ -451,6 +462,15 @@ namespace Student_Record_System
 
             cmbCourse.SelectedIndex = -1;
             LoadStudentRecords();
+        }
+
+        private void dgvStudents_Sorted(object sender, EventArgs e)
+        {
+            // Whenever the table updates its order, look through the rows and re-write numbers sequentially
+            for (int i = 0; i < dgvStudents.Rows.Count; i++)
+            {
+                dgvStudents.Rows[i].Cells["No"].Value = (i + 1).ToString();
+            }
         }
 
         private void txtEmail_KeyPress(object sender, KeyPressEventArgs e)
@@ -497,25 +517,6 @@ namespace Student_Record_System
             // string searchEmail = txtEmail.Text.Trim();
             // studentBindingSource.Filter = $"Email LIKE '%{searchEmail}%'";
         }
-
-        private bool IsValidEmail(string email)
-        {
-            if (string.IsNullOrWhiteSpace(email)) return false;
-
-            try
-            {
-                // Standard regular expression pattern for valid email structures
-                string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-                return Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-
-
         private void txtPhone_KeyPress(object sender, KeyPressEventArgs e)
         {
             // 1. Allow control keys like Backspace or Delete
