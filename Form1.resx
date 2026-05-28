@@ -164,18 +164,18 @@
   </data>
   <data name="btnExport.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        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
+        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
 </value>
   </data>
   <data name="btnOpenRecycleBin.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

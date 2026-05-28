@@ -669,6 +669,7 @@
             pnlRecycleBin.Size = new Size(800, 450);
             pnlRecycleBin.TabIndex = 9;
             pnlRecycleBin.Visible = false;
+            pnlRecycleBin.MouseCaptureChanged += pnlRecycleBin_MouseCaptureChanged;
             // 
             // panel10
             // 
@@ -736,12 +737,14 @@
             btnCloseRecycleBin.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold);
             btnCloseRecycleBin.ForeColor = Color.White;
             btnCloseRecycleBin.HoverColor = Color.FromArgb(160, 0, 0);
+            btnCloseRecycleBin.Image = Properties.Resources.logout__2_;
+            btnCloseRecycleBin.ImageAlign = ContentAlignment.MiddleLeft;
             btnCloseRecycleBin.Location = new Point(645, 128);
             btnCloseRecycleBin.Name = "btnCloseRecycleBin";
             btnCloseRecycleBin.PressedColor = Color.FromArgb(60, 0, 0);
             btnCloseRecycleBin.Size = new Size(150, 50);
             btnCloseRecycleBin.TabIndex = 3;
-            btnCloseRecycleBin.Text = "Exit";
+            btnCloseRecycleBin.Text = "Exit     ";
             btnCloseRecycleBin.TopLeftRadius = 15;
             btnCloseRecycleBin.TopRightRadius = 15;
             btnCloseRecycleBin.UseVisualStyleBackColor = false;
@@ -759,12 +762,14 @@
             btnPermanentDelete.Font = new Font("Segoe UI Semibold", 10.8F, FontStyle.Bold);
             btnPermanentDelete.ForeColor = Color.White;
             btnPermanentDelete.HoverColor = Color.FromArgb(160, 0, 0);
+            btnPermanentDelete.Image = Properties.Resources.delete__4_;
+            btnPermanentDelete.ImageAlign = ContentAlignment.MiddleLeft;
             btnPermanentDelete.Location = new Point(165, 128);
             btnPermanentDelete.Name = "btnPermanentDelete";
             btnPermanentDelete.PressedColor = Color.FromArgb(60, 0, 0);
-            btnPermanentDelete.Size = new Size(211, 50);
+            btnPermanentDelete.Size = new Size(224, 50);
             btnPermanentDelete.TabIndex = 2;
-            btnPermanentDelete.Text = "Permanently Delete";
+            btnPermanentDelete.Text = "Permanently Delete  ";
             btnPermanentDelete.TopLeftRadius = 15;
             btnPermanentDelete.TopRightRadius = 15;
             btnPermanentDelete.UseVisualStyleBackColor = false;
@@ -802,10 +807,10 @@
             dgvDeletedStudents.BackgroundColor = Color.White;
             dgvDeletedStudents.BorderStyle = BorderStyle.None;
             dgvDeletedStudents.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDeletedStudents.Location = new Point(4, 184);
+            dgvDeletedStudents.Location = new Point(-1, 184);
             dgvDeletedStudents.Name = "dgvDeletedStudents";
             dgvDeletedStudents.RowHeadersWidth = 51;
-            dgvDeletedStudents.Size = new Size(793, 263);
+            dgvDeletedStudents.Size = new Size(798, 263);
             dgvDeletedStudents.TabIndex = 0;
             // 
             // Form1

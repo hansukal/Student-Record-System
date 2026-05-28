@@ -733,7 +733,7 @@ namespace Student_Record_System
             }
             catch (Exception ex) { MessageBox.Show("Database tracking write execution failure: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
-        
+
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -901,26 +901,53 @@ namespace Student_Record_System
 
         private void btnOpenRecycleBin_Click(object sender, EventArgs e)
         {
-            // Center the panel dynamically inside the main workspace viewport frame
+            // Center the panel dynamically inside your workspace frame viewport
             pnlRecycleBin.Left = (this.ClientSize.Width - pnlRecycleBin.Width) / 2;
             pnlRecycleBin.Top = (this.ClientSize.Height - pnlRecycleBin.Height) / 2;
 
-            // Display panel and load deleted datasets
             pnlRecycleBin.Visible = true;
             pnlRecycleBin.BringToFront();
 
-            ApplyRecycleBinGridStyles();
+            // Load the records first so columns exist, THEN style them!
             LoadTrashRecords();
 
+            // SOLID FIX FOR BUG 1: Instead of using buggy mouse capture hooks that drop focus,
+            // we attach an active system-wide handler loop to detect background clicks
+            this.MouseClick += RecycleBin_OuterClickDetector;
+            dgvStudents.MouseClick += RecycleBin_OuterClickDetector;
+
+        }
+        private void CloseRecycleBinPanel()
+        {
+            pnlRecycleBin.Visible = false;
+
+            // Detach listeners to prevent memory leaks and unnecessary processing
+            this.MouseClick -= RecycleBin_OuterClickDetector;
+            dgvStudents.MouseClick -= RecycleBin_OuterClickDetector;
+
+            // Refresh the active main database grid instantly
+            LoadStudentRecords();
+        }
+        private void RecycleBin_OuterClickDetector(object sender, MouseEventArgs e)
+        {
+            if (pnlRecycleBin.Visible)
+            {
+                // Get the current global position of the mouse click cursor
+                Point globalMousePos = Cursor.Position;
+                // Convert that coordinate point relative to the local pop-up panel frame bounds
+                Point localPoint = pnlRecycleBin.PointToClient(globalMousePos);
+
+                // If the user clicks completely outside the boundaries of the panel container box, close it!
+                if (!pnlRecycleBin.ClientRectangle.Contains(localPoint))
+                {
+                    CloseRecycleBinPanel();
+                }
+            }
         }
 
         private void btnCloseRecycleBin_Click(object sender, EventArgs e)
         {
-            // Hide the panel pop-up view structure
-            pnlRecycleBin.Visible = false;
-
-            // Re-sync and refresh the active student database grid view instantly
-            LoadStudentRecords();
+            CloseRecycleBinPanel();
         }
         private void LoadTrashRecords()
         {
@@ -938,7 +965,12 @@ namespace Student_Record_System
                         {
                             DataTable dt = new DataTable();
                             adapter.Fill(dt);
+
+                            // Assigning Data Source completely rebuilds schema frames dynamically
                             dgvDeletedStudents.DataSource = dt;
+
+                            // FIX FOR BUG 2: Apply center and text alignments AFTER the data table is fully bound!
+                            ApplyRecycleBinGridStyles();
                         }
                     }
                 }
@@ -1030,17 +1062,55 @@ namespace Student_Record_System
             dgvDeletedStudents.GridColor = Color.FromArgb(242, 242, 242);
             dgvDeletedStudents.RowTemplate.Height = 32;
 
-            // Apply consistent maroon aesthetics for the layout header parameters
             dgvDeletedStudents.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
             dgvDeletedStudents.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(128, 0, 0);
             dgvDeletedStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgvDeletedStudents.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9.75F, FontStyle.Bold);
-            dgvDeletedStudents.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgvDeletedStudents.ColumnHeadersHeight = 36;
 
-            // Row Item selections styles tracking values
             dgvDeletedStudents.DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 222, 222);
             dgvDeletedStudents.DefaultCellStyle.SelectionForeColor = Color.FromArgb(128, 0, 0);
+
+            // Dynamic Alignment Processor Loop
+            for (int i = 0; i < dgvDeletedStudents.Columns.Count; i++)
+            {
+                DataGridViewColumn col = dgvDeletedStudents.Columns[i];
+
+                col.SortMode = DataGridViewColumnSortMode.Automatic;
+                col.DefaultCellStyle.Padding = new Padding(0);
+                col.HeaderCell.Style.Padding = new Padding(0);
+
+                if (col.HeaderText == "Student ID" || col.HeaderText == "Year")
+                {
+                    // Lock values dead-center across wide dimensions
+                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+                    // Counter-balance the 16px sorting arrow footprint gap on wide viewports
+                    col.HeaderCell.Style.Padding = new Padding(16, 0, 0, 0);
+                }
+                else if (col.HeaderText == "Full Name")
+                {
+                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
+                else
+                {
+                    col.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    col.HeaderCell.Style.Padding = new Padding(16, 0, 0, 0);
+                }
+            }
+        }
+
+        private void pnlRecycleBin_MouseCaptureChanged(object sender, EventArgs e)
+        {
+            // If the panel loses mouse capture and the user didn't click inside it, hide it
+            if (!pnlRecycleBin.Capture && !pnlRecycleBin.ClientRectangle.Contains(pnlRecycleBin.PointToClient(Cursor.Position)))
+            {
+                pnlRecycleBin.Visible = false;
+                LoadStudentRecords(); // Refresh the main table view instantly
+            }
         }
     }
 }
