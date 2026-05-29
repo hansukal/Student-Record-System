@@ -2,9 +2,9 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Student_Record_System
-
 {
     public partial class Form1 : Form
     {
@@ -14,7 +14,32 @@ namespace Student_Record_System
             InitializeComponent();
             LoadStudentRecords();
             this.Shown += new EventHandler(Form1_Shown);
+        }
 
+        public static class EmailValidator
+        {
+            // A robust Regex that ensures an @ symbol, a domain name, and a valid Top-Level Domain (TLD) like .com, .org, etc.
+            private static readonly Regex StrictEmailRegex = new Regex(
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+                RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            public static bool IsValidEmail(string email)
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                    return false;
+
+                // 1. Check basic length requirements (Max length for a valid email is 254 characters)
+                if (email.Length > 254)
+                    return false;
+
+                // 2. Use .NET's built-in attribute validator
+                var detector = new EmailAddressAttribute();
+                if (!detector.IsValid(email))
+                    return false;
+
+                // 3. Apply the strict Regex to catch missing TLDs (e.g., "user@gmail")
+                return StrictEmailRegex.IsMatch(email);
+            }
         }
         private void ExportGridToCSV(DataGridView dgv, string fileName)
         {
@@ -69,8 +94,8 @@ namespace Student_Record_System
 
                     // Query selects all active student profiles from the MySQL backend database
                     string query = "SELECT student_id AS 'Student ID', full_name AS 'Full Name', date_of_birth AS 'Date of Birth', " +
-                                   "gender AS 'Gender', course AS 'Course', year_level AS 'Year', email AS 'Email', phone AS 'Phone' " +
-                                   "FROM students WHERE status = 'Active'";
+               "gender AS 'Gender', course AS 'Course', year_level AS 'Year', email AS 'Email', phone AS 'Phone' " +
+               "FROM students WHERE status = 'Active'";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
@@ -364,12 +389,23 @@ namespace Student_Record_System
             // 1. Allow control keys like Backspace, Delete, Copy, Paste
             if (char.IsControl(e.KeyChar)) return;
 
-            // 2. Allow letters and spaces, but block consecutive double spaces
-            if (char.IsLetter(e.KeyChar) || e.KeyChar == ' ')
+            // 2. Allow letters, spaces, and periods, but block consecutive duplicates and leading symbols
+            if (char.IsLetter(e.KeyChar) || e.KeyChar == ' ' || e.KeyChar == '.')
             {
-                if (e.KeyChar == ' ' && txtFullName.Text.EndsWith(" "))
+                // Reject if space or period is the very first character
+                if ((e.KeyChar == ' ' || e.KeyChar == '.') && txtFullName.Text.Length == 0)
                 {
-                    e.Handled = true; // Reject a second space in a row
+                    e.Handled = true;
+                }
+                // Reject a second space in a row
+                else if (e.KeyChar == ' ' && txtFullName.Text.EndsWith(" "))
+                {
+                    e.Handled = true;
+                }
+                // Reject a second period in a row
+                else if (e.KeyChar == '.' && txtFullName.Text.EndsWith("."))
+                {
+                    e.Handled = true;
                 }
                 return;
             }
@@ -390,9 +426,39 @@ namespace Student_Record_System
                 FullName = fullName;
             }
         }
+        private void MoveToNextField_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Check if the user pressed the Enter key
+            if (e.KeyCode == Keys.Enter)
+            {
+                // Suppress the default Windows "ding" warning chime sound
+                e.SuppressKeyPress = true;
 
+                Control currentControl = (Control)sender;
+
+                // Manually route the focus to the exact next control in your logical sequence
+                if (currentControl == txtStudentID) txtFullName.Focus();
+                else if (currentControl == txtFullName) dtpDOB.Focus();
+                else if (currentControl == dtpDOB) cmbGender.Focus();
+                else if (currentControl == cmbGender) cmbCourse.Focus();
+                else if (currentControl == cmbCourse) cmbYear.Focus();
+                else if (currentControl == cmbYear) txtEmail.Focus();
+                else if (currentControl == txtEmail) txtPhone.Focus();
+                else if (currentControl == txtPhone) btnAdd.Focus(); // Moves straight to the submit action
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.MouseClick += Form1_MouseClick;
+            panel3.TabIndex = 0;
+            panel5.TabIndex = 1;
+            panel6.TabIndex = 2;
+            panel7.TabIndex = 3;
+            panel2.TabIndex = 4;
+            panel8.TabIndex = 5;
+            panel4.TabIndex = 6;
+            panel9.TabIndex = 7;
+            this.ActiveControl = txtStudentID;
             dgvStudents.EnableHeadersVisualStyles = false;
             dgvStudents.ReadOnly = true;
 
@@ -443,8 +509,8 @@ namespace Student_Record_System
         new CourseItem("BSIT", "BSIT - Bachelor of Science in Information Technology"),
         new CourseItem("BSENTREP", "BSENTREP - Bachelor of Science in Entrepreneurship"),
         new CourseItem("BSHM", "BSHM - Bachelor of Science in Hospitality Management"),
-        new CourseItem("BSED-ENG", "BSED-ENG - Bachelor of Secondary Education major in English"),
-        new CourseItem("BSED-MATH", "BSED-MATH - Bachelor of Secondary Education major in Mathematics"),
+        new CourseItem("BSED-ENG", "BSED-ENG - Bachelor of Secondary Education Major in English"),
+        new CourseItem("BSED-MATH", "BSED-MATH - Bachelor of Secondary Education Major in Mathematics"),
         new CourseItem("DOMT", "DOMT - Diploma in Office Management Technology")
     };
 
@@ -562,12 +628,6 @@ namespace Student_Record_System
                 }
             }
         }
-
-        private void Form1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtPhone_TextChanged(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtPhone.Text)) return;
@@ -654,10 +714,62 @@ namespace Student_Record_System
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtStudentID.Text) || string.IsNullOrWhiteSpace(txtFullName.Text) ||
-                string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtPhone.Text))
+            // 1. INDIVIDUAL FIELD VALIDATION
+            if (string.IsNullOrWhiteSpace(txtStudentID.Text))
             {
-                MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Student ID cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtStudentID.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            {
+                MessageBox.Show("Full Name cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtFullName.Focus();
+                return;
+            }
+
+            if (cmbGender.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select a valid Gender.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbGender.DroppedDown = true;
+                return;
+            }
+
+            if (cmbCourse.SelectedIndex == -1 || cmbCourse.SelectedValue == null)
+            {
+                MessageBox.Show("Please select a valid Course.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbCourse.DroppedDown = true;
+                return;
+            }
+
+            if (cmbYear.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select a valid Year Level.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbYear.DroppedDown = true;
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtEmail.Text))
+            {
+                MessageBox.Show("Email Address cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtEmail.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPhone.Text))
+            {
+                MessageBox.Show("Phone Number cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPhone.Focus();
+                return;
+            }
+
+            // 2. ROBUST EMAIL VALIDATION
+            string emailInput = txtEmail.Text.Trim();
+            if (!EmailValidator.IsValidEmail(emailInput))
+            {
+                MessageBox.Show("Please enter a valid email address (e.g., student@bulacan.pup.edu.ph).", "Invalid Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtEmail.Focus();
                 return;
             }
 
@@ -667,6 +779,7 @@ namespace Student_Record_System
                 {
                     conn.Open();
 
+                    // 3. SCANNING FOR DUPLICATES
                     string checkQuery = "SELECT student_id, full_name, phone, email FROM students " +
                                          "WHERE student_id = @id OR full_name = @name OR phone = @phone OR email = @email";
 
@@ -675,7 +788,7 @@ namespace Student_Record_System
                         checkCmd.Parameters.AddWithValue("@id", txtStudentID.Text.Trim());
                         checkCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
                         checkCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
-                        checkCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@email", emailInput);
 
                         using (MySqlDataReader reader = checkCmd.ExecuteReader())
                         {
@@ -696,7 +809,7 @@ namespace Student_Record_System
                                     MessageBox.Show("Duplicate Error: This Phone Number already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     return;
                                 }
-                                if (reader["email"].ToString().Equals(txtEmail.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                if (reader["email"].ToString().Equals(emailInput, StringComparison.OrdinalIgnoreCase))
                                 {
                                     MessageBox.Show("Duplicate Error: This Email Address already exists in the system.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     return;
@@ -705,6 +818,7 @@ namespace Student_Record_System
                         }
                     }
 
+                    // 4. DATABASE INSERTION
                     string insertQuery = "INSERT INTO students (student_id, full_name, date_of_birth, gender, course, year_level, email, phone, status) " +
                                          "VALUES (@id, @name, @dob, @gender, @course, @year, @email, @phone, 'Active')";
 
@@ -713,10 +827,10 @@ namespace Student_Record_System
                         insertCmd.Parameters.AddWithValue("@id", txtStudentID.Text.Trim());
                         insertCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
                         insertCmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
-                        insertCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem?.ToString() ?? "");
+                        insertCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem.ToString());
                         insertCmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue?.ToString() ?? "");
-                        insertCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem?.ToString() ?? "");
-                        insertCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        insertCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem.ToString());
+                        insertCmd.Parameters.AddWithValue("@email", emailInput);
                         insertCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
 
                         insertCmd.ExecuteNonQuery();
@@ -726,7 +840,10 @@ namespace Student_Record_System
                     LoadStudentRecords();
                 }
             }
-            catch (Exception ex) { MessageBox.Show("Database tracking write execution failure: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Database write failure: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
 
@@ -769,13 +886,74 @@ namespace Student_Record_System
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            // 1. SELECTION CHECK
             if (dgvStudents.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select a student record from the table to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // 2. INDIVIDUAL FIELD VALIDATION
+            if (string.IsNullOrWhiteSpace(txtStudentID.Text))
+            {
+                MessageBox.Show("Student ID cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtStudentID.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            {
+                MessageBox.Show("Full Name cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtFullName.Focus();
+                return;
+            }
+
+            if (cmbGender.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select a valid Gender.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbGender.DroppedDown = true; // Automatically drops down the selection list for the user
+                return;
+            }
+
+            if (cmbCourse.SelectedIndex == -1 || cmbCourse.SelectedValue == null)
+            {
+                MessageBox.Show("Please select a valid Course.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbCourse.DroppedDown = true;
+                return;
+            }
+
+            if (cmbYear.SelectedIndex == -1)
+            {
+                MessageBox.Show("Please select a valid Year Level.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cmbYear.DroppedDown = true;
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtEmail.Text))
+            {
+                MessageBox.Show("Email Address cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtEmail.Focus();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPhone.Text))
+            {
+                MessageBox.Show("Phone Number cannot be left blank.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPhone.Focus();
+                return;
+            }
+
+            // 3. ROBUST EMAIL VALIDATION
+            string emailInput = txtEmail.Text.Trim();
+            if (!EmailValidator.IsValidEmail(emailInput))
+            {
+                MessageBox.Show("Please enter a valid email address (e.g., student@bulacan.pup.edu.ph).", "Invalid Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtEmail.Focus();
+                return;
+            }
+
             string originalStudentID = dgvStudents.SelectedRows[0].Cells["Student ID"].Value.ToString();
+            string newStudentID = txtStudentID.Text.Trim();
 
             try
             {
@@ -783,20 +961,27 @@ namespace Student_Record_System
                 {
                     conn.Open();
 
-                    string checkQuery = "SELECT full_name, phone, email FROM students " +
-                                         "WHERE (full_name = @name OR phone = @phone OR email = @email) AND student_id != @originalId";
+                    // 4. DUPLICATE CHECK
+                    string checkQuery = "SELECT student_id, full_name, phone, email FROM students " +
+                                         "WHERE (student_id = @newId OR full_name = @name OR phone = @phone OR email = @email) AND student_id != @originalId";
 
                     using (MySqlCommand checkCmd = new MySqlCommand(checkQuery, conn))
                     {
+                        checkCmd.Parameters.AddWithValue("@newId", newStudentID);
                         checkCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
                         checkCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
-                        checkCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        checkCmd.Parameters.AddWithValue("@email", emailInput);
                         checkCmd.Parameters.AddWithValue("@originalId", originalStudentID);
 
                         using (MySqlDataReader reader = checkCmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
+                                if (reader["student_id"].ToString().Equals(newStudentID, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    MessageBox.Show("Update Error: This Student ID is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    return;
+                                }
                                 if (reader["full_name"].ToString().Equals(txtFullName.Text.Trim(), StringComparison.OrdinalIgnoreCase))
                                 {
                                     MessageBox.Show("Update Error: This Full Name is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -807,7 +992,7 @@ namespace Student_Record_System
                                     MessageBox.Show("Update Error: This Phone Number is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     return;
                                 }
-                                if (reader["email"].ToString().Equals(txtEmail.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+                                if (reader["email"].ToString().Equals(emailInput, StringComparison.OrdinalIgnoreCase))
                                 {
                                     MessageBox.Show("Update Error: This Email Address is already assigned to another student.", "Duplicate Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                     return;
@@ -816,18 +1001,20 @@ namespace Student_Record_System
                         }
                     }
 
-                    string updateQuery = "UPDATE students SET full_name = @name, date_of_birth = @dob, gender = @gender, " +
+                    // 5. DATABASE EXECUTION
+                    string updateQuery = "UPDATE students SET student_id = @newId, full_name = @name, date_of_birth = @dob, gender = @gender, " +
                                          "course = @course, year_level = @year, email = @email, phone = @phone " +
                                          "WHERE student_id = @originalId";
 
                     using (MySqlCommand updateCmd = new MySqlCommand(updateQuery, conn))
                     {
+                        updateCmd.Parameters.AddWithValue("@newId", newStudentID);
                         updateCmd.Parameters.AddWithValue("@name", txtFullName.Text.Trim());
                         updateCmd.Parameters.AddWithValue("@dob", dtpDOB.Value.ToString("yyyy-MM-dd"));
-                        updateCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem?.ToString() ?? "");
+                        updateCmd.Parameters.AddWithValue("@gender", cmbGender.SelectedItem.ToString());
                         updateCmd.Parameters.AddWithValue("@course", cmbCourse.SelectedValue?.ToString() ?? "");
-                        updateCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem?.ToString() ?? "");
-                        updateCmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
+                        updateCmd.Parameters.AddWithValue("@year", cmbYear.SelectedItem.ToString());
+                        updateCmd.Parameters.AddWithValue("@email", emailInput);
                         updateCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
                         updateCmd.Parameters.AddWithValue("@originalId", originalStudentID);
 
@@ -838,7 +1025,10 @@ namespace Student_Record_System
                     LoadStudentRecords();
                 }
             }
-            catch (Exception ex) { MessageBox.Show("Database update row modification error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Database update error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -1097,7 +1287,6 @@ namespace Student_Record_System
                 }
             }
         }
-
         private void pnlRecycleBin_MouseCaptureChanged(object sender, EventArgs e)
         {
             // If the panel loses mouse capture and the user didn't click inside it, hide it
@@ -1107,6 +1296,11 @@ namespace Student_Record_System
                 LoadStudentRecords(); // Refresh the main table view instantly
             }
         }
+        private void Form1_MouseClick(object sender, MouseEventArgs e)
+        {
+            // Mirror the click behavior used elsewhere: clear inputs and deselect any grid selection
+            ClearFields();
+            dgvStudents.ClearSelection();
+        }
     }
 }
-

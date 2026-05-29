@@ -149,7 +149,7 @@
             txtPhone.MaxLength = 13;
             txtPhone.Name = "txtPhone";
             txtPhone.Size = new Size(200, 31);
-            txtPhone.TabIndex = 17;
+            txtPhone.TabIndex = 7;
             txtPhone.TextChanged += txtPhone_TextChanged;
             txtPhone.KeyDown += txtPhone_KeyDown;
             txtPhone.KeyPress += txtPhone_KeyPress;
@@ -178,7 +178,7 @@
             cmbYear.MaximumSize = new Size(150, 0);
             cmbYear.Name = "cmbYear";
             cmbYear.Size = new Size(107, 33);
-            cmbYear.TabIndex = 13;
+            cmbYear.TabIndex = 5;
             // 
             // panel7
             // 
@@ -202,7 +202,7 @@
             cmbGender.Margin = new Padding(3, 10, 3, 3);
             cmbGender.Name = "cmbGender";
             cmbGender.Size = new Size(109, 33);
-            cmbGender.TabIndex = 9;
+            cmbGender.TabIndex = 3;
             // 
             // panel6
             // 
@@ -233,7 +233,7 @@
             panel5.Location = new Point(613, 58);
             panel5.Name = "panel5";
             panel5.Size = new Size(408, 39);
-            panel5.TabIndex = 21;
+            panel5.TabIndex = 1;
             // 
             // txtFullName
             // 
@@ -244,10 +244,10 @@
             txtFullName.Location = new Point(5, 4);
             txtFullName.Margin = new Padding(3, 10, 3, 3);
             txtFullName.MaximumSize = new Size(400, 31);
-            txtFullName.MaxLength = 30;
+            txtFullName.MaxLength = 40;
             txtFullName.Name = "txtFullName";
             txtFullName.Size = new Size(398, 31);
-            txtFullName.TabIndex = 5;
+            txtFullName.TabIndex = 1;
             txtFullName.TextChanged += txtFullName_TextChanged;
             txtFullName.KeyPress += txtFullName_KeyPress;
             // 
@@ -270,7 +270,7 @@
             txtEmail.MaximumSize = new Size(374, 31);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(374, 31);
-            txtEmail.TabIndex = 16;
+            txtEmail.TabIndex = 100;
             txtEmail.TextChanged += txtEmail_TextChanged;
             txtEmail.KeyPress += txtEmail_KeyPress;
             // 
@@ -297,7 +297,7 @@
             txtStudentID.PlaceholderText = "ex. 2024-00174-SM-0";
             txtStudentID.ShortcutsEnabled = false;
             txtStudentID.Size = new Size(230, 31);
-            txtStudentID.TabIndex = 3;
+            txtStudentID.TabIndex = 0;
             txtStudentID.TextChanged += txtStudentID_TextChanged;
             txtStudentID.KeyDown += txtStudentID_KeyDown;
             txtStudentID.KeyPress += txtStudentID_KeyPress;
@@ -326,7 +326,7 @@
             cmbCourse.Margin = new Padding(10);
             cmbCourse.Name = "cmbCourse";
             cmbCourse.Size = new Size(588, 33);
-            cmbCourse.TabIndex = 11;
+            cmbCourse.TabIndex = 4;
             // 
             // label11
             // 
@@ -516,7 +516,7 @@
             btnUpdate.Font = new Font("Segoe UI Semibold", 13.8F, FontStyle.Bold);
             btnUpdate.ForeColor = Color.White;
             btnUpdate.HoverColor = Color.RoyalBlue;
-            btnUpdate.Image = Properties.Resources.pencil__1_;
+            btnUpdate.Image = (Image)resources.GetObject("btnUpdate.Image");
             btnUpdate.ImageAlign = ContentAlignment.MiddleLeft;
             btnUpdate.Location = new Point(230, 382);
             btnUpdate.Name = "btnUpdate";
@@ -836,7 +836,6 @@
             Text = "Student Record System";
             Load += Form1_Load;
             Shown += Form1_Shown;
-            TextChanged += Form1_TextChanged;
             roundedGroupBox1.ResumeLayout(false);
             roundedGroupBox1.PerformLayout();
             panel9.ResumeLayout(false);
